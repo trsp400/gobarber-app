@@ -23,7 +23,8 @@ interface AuthState {
 
 interface ContextShape {
   user: UserInterface;
-  signIn(credentials: Credentials): Promise<void>;
+  loading: boolean;
+  signIn(data: Credentials): Promise<void>;
   signOut(): void;
 }
 
@@ -42,14 +43,18 @@ export const AuthProvider: React.FC = ({children}) => {
   }, []);
 
   const [data, setData] = useState<AuthState>({} as AuthState);
+  const [loading, setLoading] = useState(true);
 
   const signIn = useCallback(async ({email, password}) => {
+    console.log('oiews');
     const response = await api.post('/sessions', {
       email,
       password,
     });
 
     const {token, user} = response.data;
+
+    console.log(token, user);
 
     await AsyncStorage.setItem('@GoBarber-token', token);
     await AsyncStorage.setItem('@GoBarber-user', JSON.stringify(user));
@@ -75,13 +80,14 @@ export const AuthProvider: React.FC = ({children}) => {
       if (token[1] && user[1]) {
         setData({token: token[1], user: JSON.parse(user[1])});
       }
+      setLoading(false);
     }
 
     loadStorageData();
   }, [retrieveUserInfo]);
 
   return (
-    <AuthContext.Provider value={{user: data.user, signIn, signOut}}>
+    <AuthContext.Provider value={{user: data.user, loading, signIn, signOut}}>
       {children}
     </AuthContext.Provider>
   );

@@ -82,6 +82,8 @@ const SignIn: React.FC = () => {
           formRef.current?.setErrors(errors);
         }
 
+        console.log(error);
+
         Alert.alert(
           'Erro no autenticação',
           'Verifique os campos e tente novamente',
@@ -96,11 +98,9 @@ const SignIn: React.FC = () => {
       setKeyboardVisible(true);
     });
 
-    return () => {
-      Keyboard.addListener('keyboardDidHide', () => {
-        setKeyboardVisible(false);
-      });
-    };
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
   }, []);
 
   return (
